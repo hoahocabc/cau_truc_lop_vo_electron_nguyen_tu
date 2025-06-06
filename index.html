@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+  <meta charset="UTF-8">
+  <title>BÀI TẬP</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']] },
+      chtml: { scale: 0.9 },
+      svg: { fontCache: 'global' }
+    };
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var draggable = document.getElementById(data);
+      var dropZone = ev.target;
+      while (dropZone && !dropZone.classList.contains("dropzone") && dropZone.tagName !== "BODY") {
+        dropZone = dropZone.parentNode;
+      }
+      if (!dropZone) return;
+      var label = dropZone.querySelector(".drop-label");
+      if (label) {
+         if (label.nextSibling) {
+           dropZone.insertBefore(draggable, label.nextSibling);
+         } else {
+           dropZone.appendChild(draggable);
+         }
+      } else {
+         dropZone.appendChild(draggable);
+      }
+    }
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f7f8fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    .top-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+    .score-box {
+      border: 2px solid #ff5252;
+      padding: 10px 20px;
+      background: #ffecec;
+      color: #ff5252;
+      font-weight: bold;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 2.5em;
+      margin: 0;
+    }
+    .header h2 {
+      font-size: 1.2em;
+      color: #777;
+      margin-top: 10px;
+    }
+    .section {
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .section:first-of-type {
+      border-top: none;
+    }
+    .section h2 {
+      color: #444;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 10px;
+    }
+    .question {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #fbfbfb;
+    }
+    .question p {
+      margin: 0 0 10px;
+    }
+    .option {
+      margin: 5px 0;
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    .explanation {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #ccc;
+      display: none;
+      font-size: 0.95em;
+    }
+    button {
+      background: #4285f4;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #307cf1;
+    }
+    .drag-drop-container {
+      display: flex;
+      gap: 15px;
+    }
+    .drag-column, .drop-column {
+      flex: 1;
+      padding: 10px;
+      border: 1px dashed #ccc;
+      border-radius: 4px;
+      min-height: 100px;
+      background: #f9f9f9;
+    }
+    .draggable-item {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 8px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      cursor: move;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .dropzone-wrapper {
+      margin-bottom: 10px;
+    }
+    .dropzone {
+      min-height: 50px;
+      border: 1px dashed #aaa;
+      padding: 5px;
+      border-radius: 4px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .drop-label {
+      color: #4285f4;
+      text-align: center;
+      font-weight: bold;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+    .blank-container input.auto-expand {
+      font-size: inherit;
+      width: 50px;
+      height: 16px;
+      padding: 2px;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 4px;
+    }
+  </style>
+
+</head>
+<body>
+  <div class='container'>
+    <div class='top-row'><div class='score-box' id='scoreDisplay'>Tổng số điểm:</div></div>
+    <div class='header'><h1>BÀI TẬP CẤU TRÚC LỚP VỎ ELECTRON NGUYÊN TỬ</h1><h2>(HÓA HỌC ABC)</h2></div>
+<div class='section' id='part1' data-parttype='1'>
+<h2>Phần 1: Trắc nghiệm nhiều lựa chọn (có một phương án đúng)</h2>
+<div class='question' id='part1_q1'>
+<p><strong>Câu 1:</strong><br><br>Theo mô hình hiện đại, electron chuyển động quanh hạt nhân</p>
+<div class='option'><label><input type='radio' name='part1_q1' value='A'> <strong>A.</strong>  theo quỹ đạo tròn.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='B'> <strong>B.</strong>  theo quỹ đạo hình elip.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='C'> <strong>C.</strong>  không theo quỹ đạo xác định.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='D'> <strong>D.</strong>  theo quỹ đạo tròn hoặc elip.</label></div>
+<div class='explanation' id='part1_q1_result' data-answer='C' data-solution=''></div>
+</div>
+<div class='question' id='part1_q2'>
+<p><strong>Câu 2:</strong><br><br>Người đầu tiên đưa ra mô hình hành tinh nguyên tử để mô tả sự chuyển động của electron trong nguyên tử là ai?</p>
+<div class='option'><label><input type='radio' name='part1_q2' value='A'> <strong>A.</strong>  Arnold Sommerfeld.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='B'> <strong>B.</strong>  Ernest Rutherford.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='C'> <strong>C.</strong>  Niels Bohr.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='D'> <strong>D.</strong>  Erwin Schrödinger.</label></div>
+<div class='explanation' id='part1_q2_result' data-answer='B' data-solution=''></div>
+</div>
+<div class='question' id='part1_q3'>
+<p><strong>Câu 3:</strong><br><br>Người đưa ra mô hình orbital nguyên tử là ai?</p>
+<div class='option'><label><input type='radio' name='part1_q3' value='A'> <strong>A.</strong>  Arnold Sommerfeld.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='B'> <strong>B.</strong>  Ernest Rutherford.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='C'> <strong>C.</strong>  Niels Bohr.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='D'> <strong>D.</strong>  Erwin Schrödinger.</label></div>
+<div class='explanation' id='part1_q3_result' data-answer='D' data-solution=''></div>
+</div>
+<div class='question' id='part1_q4'>
+<p><strong>Câu 4:</strong><br><br>Trong mô hình nguyên tử Bohr, electron chuyển động</p>
+<div class='option'><label><input type='radio' name='part1_q4' value='A'> <strong>A.</strong>  trên các quỹ đạo elip quanh hạt nhân.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='B'> <strong>B.</strong>  ngẫu nhiên trong không gian.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='C'> <strong>C.</strong>  theo quỹ đạo tròn có mức năng lượng xác định.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='D'> <strong>D.</strong>  không chuyển động mà đứng yên tại chỗ.</label></div>
+<div class='explanation' id='part1_q4_result' data-answer='C' data-solution=''></div>
+</div>
+<div class='question' id='part1_q5'>
+<p><strong>Câu 5:</strong><br><br>Orbital nguyên tử (Atomic orbital, viết tắt là AO) là khu vực không gian xung quanh hạt nhân nguyên tử mà ở đó xác suất tìm thấy electron khoảng bao nhiêu phần trăm?</p>
+<div class='option'><label><input type='radio' name='part1_q5' value='A'> <strong>A.</strong>  10%.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='B'> <strong>B.</strong>  100%.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='C'> <strong>C.</strong>  50%.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='D'> <strong>D.</strong>  90%.</label></div>
+<div class='explanation' id='part1_q5_result' data-answer='D' data-solution=''></div>
+</div>
+<div class='question' id='part1_q6'>
+<p><strong>Câu 6:</strong><br><br>Số lượng orbital trên các phân lớp s, p, d, f lần lượt là:</p>
+<div class='option'><label><input type='radio' name='part1_q6' value='A'> <strong>A.</strong>  2, 4, 6, 8.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='B'> <strong>B.</strong>  1, 3, 5, 7.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='C'> <strong>C.</strong>  2, 6, 10, 14.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='D'> <strong>D.</strong>  2, 8, 18, 32.</label></div>
+<div class='explanation' id='part1_q6_result' data-answer='B' data-solution=''></div>
+</div>
+<div class='question' id='part1_q7'>
+<p><strong>Câu 7:</strong><br><br>Trong số các orbital dưới đây, orbital nào có mức năng lượng cao nhất ở trạng thái cơ bản?</p>
+<div class='option'><label><input type='radio' name='part1_q7' value='A'> <strong>A.</strong>  2s.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='B'> <strong>B.</strong>  2p.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='C'> <strong>C.</strong>  3s.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='D'> <strong>D.</strong>  3p.</label></div>
+<div class='explanation' id='part1_q7_result' data-answer='D' data-solution=''></div>
+</div>
+<div class='question' id='part1_q8'>
+<p><strong>Câu 8:</strong><br><br>Một phân lớp d có tối đa bao nhiêu electron?</p>
+<div class='option'><label><input type='radio' name='part1_q8' value='A'> <strong>A.</strong>  2.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='B'> <strong>B.</strong>  6.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='C'> <strong>C.</strong>  10.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='D'> <strong>D.</strong>  14.</label></div>
+<div class='explanation' id='part1_q8_result' data-answer='C' data-solution=''></div>
+</div>
+<div class='question' id='part1_q9'>
+<p><strong>Câu 9:</strong><br><br>Thứ tự phân mức năng lượng từ thấp đến cao (tính từ trái sang phải) đúng?</p>
+<div class='option'><label><input type='radio' name='part1_q9' value='A'> <strong>A.</strong>  1s 2s 2p 3p 3s 3d 4s.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='B'> <strong>B.</strong>  1s 2s 2p 3s 3p 4s 3d.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='C'> <strong>C.</strong>  2s 1s 2p 3s 3p 4s 3d.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='D'> <strong>D.</strong>  1s 2p 2s 3s 3p 4s 3d.</label></div>
+<div class='explanation' id='part1_q9_result' data-answer='B' data-solution=''></div>
+</div>
+<div class='question' id='part1_q10'>
+<p><strong>Câu 10:</strong><br><br>Cấu hình electron nào dưới đây là của Cr (Z=24)?</p>
+<div class='option'><label><input type='radio' name='part1_q10' value='A'> <strong>A.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 4p⁴.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='B'> <strong>B.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁴ 4s².</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='C'> <strong>C.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='D'> <strong>D.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁵ 4s¹.</label></div>
+<div class='explanation' id='part1_q10_result' data-answer='D' data-solution=''></div>
+</div>
+</div>
+<div class='section' id='part2' data-parttype='2'>
+<h2>Phần 2: Trắc nghiệm nhiều lựa chọn (có thể có nhiều đáp án đúng)</h2>
+<div class='question' id='part2_q1'>
+<p><strong>Câu 1:</strong><br><br>Trường hợp nào dưới đây là đúng khi nói về hình dạng orbital nguyên tử?</p>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='A'> <strong>A.</strong>  Orbital s có dạng hình cầu.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='B'> <strong>B.</strong>  Orbital d có dạng hình số 8 nổi (quả tạ đôi).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='C'> <strong>C.</strong>  Orbital f có dạng hình cầu.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='D'> <strong>D.</strong>  Orbital p có dạng hình số 8 nổi (quả tạ đôi).</label></div>
+<div class='explanation' id='part2_q1_result' data-answer='A,D' data-solution='%3Cbr%3EOrbital%20s%20c%C3%B3%20d%E1%BA%A1ng%20h%C3%ACnh%20c%E1%BA%A7u%2C%20orbital%20p%20c%C3%B3%20d%E1%BA%A1ng%20h%C3%ACnh%20s%E1%BB%91%208%20n%E1%BB%95i%20%28ho%E1%BA%B7c%20qu%E1%BA%A3%20t%E1%BA%A1%20%C4%91%C3%B4i%29.%3Cbr%3E%3Cimg%20src%3D%22Orbital%20s-p.png%22%20alt%3D%22Image%22%20style%3D%22max-width%3A40%25%3B%22%3E%3Cbr%3E%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q2'>
+<p><strong>Câu 2:</strong><br><br>Nhận định nào dưới đây là đúng?</p>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='A'> <strong>A.</strong>  Số phân lớp trong một lớp bằng số thứ tự lớp.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='B'> <strong>B.</strong>  Mỗi orbital chứa tối đa 2 electron.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='C'> <strong>C.</strong>  Lớp 2 được kí hiệu là K.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='D'> <strong>D.</strong>  Số electron tối đa trên phân lớp s, p, d, f lần lượt là 2, 6, 10, 14.</label></div>
+<div class='explanation' id='part2_q2_result' data-answer='A,B,D' data-solution=''></div>
+</div>
+<div class='question' id='part2_q3'>
+<p><strong>Câu 3:</strong><br><br>Nguyên tử nguyên tố X có số hiệu nguyên tử là 17. Kết luận nào dưới đây là đúng? </p>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='A'> <strong>A.</strong>  Cấu hình electron nguyên tử của nguyên tố X là: 1s² 2s² 2p⁶ 3s² 3p⁵.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='B'> <strong>B.</strong>  X là nguyên tố phi kim.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='C'> <strong>C.</strong>  X có 5 electron lớp ngoài cùng.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='D'> <strong>D.</strong>  X là nguyên tố chlorine (Cl).</label></div>
+<div class='explanation' id='part2_q3_result' data-answer='A,B,D' data-solution=''></div>
+</div>
+<div class='question' id='part2_q4'>
+<p><strong>Câu 4:</strong><br><br>Orbital p có những loại nào?</p>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='A'> <strong>A.</strong>  ${{p}_{x}}$.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='B'> <strong>B.</strong>  ${{p}_{y}}$.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='C'> <strong>C.</strong>  ${{p}_{z}}$.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='D'> <strong>D.</strong>  ${{p}_{xyz}}$.</label></div>
+<div class='explanation' id='part2_q4_result' data-answer='A,B,C' data-solution=''></div>
+</div>
+<div class='question' id='part2_q5'>
+<p><strong>Câu 5:</strong><br><br>Cấu hình electron nào dưới đây là đúng?</p>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='A'> <strong>A.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 4s².</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='B'> <strong>B.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁸ 4s².</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='C'> <strong>C.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p¹.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='D'> <strong>D.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁶.</label></div>
+<div class='explanation' id='part2_q5_result' data-answer='A,B,C' data-solution=''></div>
+</div>
+<div class='question' id='part2_q6'>
+<p><strong>Câu 6:</strong><br> <br>Cấu hình electron nào dưới đây vi phạm nguyên lý Pauli?</p>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='A'> <strong>A.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s².</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='B'> <strong>B.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d¹⁰ 4s² 4p⁷.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='C'> <strong>C.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='D'> <strong>D.</strong>  1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁵ 4s¹.</label></div>
+<div class='explanation' id='part2_q6_result' data-answer='B' data-solution=''></div>
+</div>
+</div>
+<div class='section' id='part3' data-parttype='3'>
+<h2>Phần 3: Trắc nghiệm trả lời ngắn</h2>
+<div class='question' id='part3_q1'>
+<p><strong>Câu 1:</strong><br><br>Nguyên tử của nguyên tố M có 3 lớp eletron, lớp thứ 3 có 4 electron. Xác định số hiệu nguyên tử của M.</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q1_input'></div>
+<div class='explanation' id='part3_q1_result' data-answer=' 14' data-solution='%3Cbr%3EL%E1%BB%9Bp%20th%E1%BB%A9%203%20c%C3%B3%204%20electron.%20Trong%20m%E1%BB%99t%20l%E1%BB%9Bp%2C%20c%C3%A1c%20electron%20%C4%91%C6%B0%E1%BB%A3c%20x%E1%BA%BFp%20theo%20th%E1%BB%A9%20t%E1%BB%B1%20t%E1%BB%AB%20m%E1%BB%A9c%20n%C4%83ng%20l%C6%B0%E1%BB%A3ng%20th%E1%BA%A5p%20%C4%91%E1%BA%BFn%20m%E1%BB%A9c%20n%C4%83ng%20l%C6%B0%E1%BB%A3ng%20cao%2C%20do%20%C4%91%C3%B3%20c%E1%BA%A5u%20h%C3%ACnh%20electron%20l%E1%BB%9Bp%203%20l%C3%A0%203s23p2.%3Cbr%3E%C4%90%C3%A3%20c%C3%B3%20electron%20tr%C3%AAn%20l%E1%BB%9Bp%203%2C%20do%20%C4%91%C3%B3%20l%E1%BB%9Bp%201%20v%C3%A0%20l%E1%BB%9Bp%202%20%C4%91%C3%A3%20%C4%91%C6%B0%E1%BB%A3c%20%C4%91i%E1%BB%81n%20%C4%91%E1%BA%A7y%20electron.%3Cbr%3EC%E1%BA%A5u%20h%C3%ACnh%20electron%20%C4%91%E1%BA%A7y%20%C4%91%E1%BB%A7%20c%E1%BB%A7a%20M%20l%C3%A0%3A%201s%C2%B2%202s%C2%B2%202p%E2%81%B6%203s%C2%B2%203p%C2%B2.%3Cbr%3EM%20c%C3%B3%2014%20electron%20n%C3%AAn%20s%E1%BB%91%20hi%E1%BB%87u%20nguy%C3%AAn%20t%E1%BB%AD%20c%E1%BB%A7a%20M%20l%C3%A0%2014.'></div>
+</div>
+<div class='question' id='part3_q2'>
+<p><strong>Câu 2:</strong><br><br>Tổng số hạt proton, neutron và electron trong nguyên tử nguyên tố X là 82. Trong đó, số hạt mang điện nhiều hơn số hạt không mang điện là 22. Xác định số hạt electron trong nguyên tử.</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q2_input'></div>
+<div class='explanation' id='part3_q2_result' data-answer=' 26' data-solution='%3Cbr%3ET%E1%BB%95ng%20s%E1%BB%91%20h%E1%BA%A1t%20l%C3%A0%2082%2C%20n%C3%AAn%20ta%20c%C3%B3%3A%202Z%20%2B%20N%20%3D%2082%20%281%29%3Cbr%3ETrong%20%C4%91%C3%B3%2C%20s%E1%BB%91%20h%E1%BA%A1t%20mang%20%C4%91i%E1%BB%87n%20nhi%E1%BB%81u%20h%C6%A1n%20s%E1%BB%91%20h%E1%BA%A1t%20kh%C3%B4ng%20mang%20%C4%91i%E1%BB%87n%20l%C3%A0%2022%2C%20n%C3%AAn%20ta%20c%C3%B3%3A%202Z%20-%20N%20%3D%2022%20%282%29%3Cbr%3ET%E1%BB%AB%20%281%29%20v%C3%A0%20%282%29%2C%20ta%20c%C3%B3%20h%E1%BB%87%3A%3Cbr%3E%5C%5B%5Cleft%5C%7B%20%5Cbegin%7Balign%7D%3Cbr%3E%26%202Z%2BN%3D82%20%5C%5C%3Cbr%3E%26%202Z-N%3D22%20%5C%5C%3Cbr%3E%5Cend%7Balign%7D%20%5Cright.%5C%5D%3Cbr%3EGi%E1%BA%A3i%20h%E1%BB%87%20ta%20%C4%91%C6%B0%E1%BB%A3c%3A%20Z%20%3D%2026%2C%20N%20%3D%2030.%3Cbr%3ES%E1%BB%91%20hi%E1%BB%87u%20nguy%C3%AAn%20t%E1%BB%AD%20Z%20%3D%2026%20n%C3%AAn%20X%20c%C3%B3%2026%20electron.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part3_q3'>
+<p><strong>Câu 3:</strong><br><br>Trong nguyên tử Fe (Z = 26), phân lớp 3d có bao nhiêu electron?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q3_input'></div>
+<div class='explanation' id='part3_q3_result' data-answer=' 6|| 6 electron' data-solution='%3Cbr%3EC%E1%BA%A5u%20h%C3%ACnh%20electron%20nguy%C3%AAn%20t%E1%BB%AD%20Fe%3A%20%5BAr%5D3d%E2%81%B64s%C2%B2.%3Cbr%3ET%E1%BB%AB%20c%E1%BA%A5u%20h%C3%ACnh%20electron%20ta%20suy%20ra%20ph%C3%A2n%20l%E1%BB%9Bp%203d%20c%E1%BB%A7a%20Fe%20c%C3%B3%206%20electron.'></div>
+</div>
+<div class='question' id='part3_q4'>
+<p><strong>Câu 4:</strong><br><br>Ở trạng thái cơ bản, nguyên tử oxygen (Z=8) có bao nhiêu electron độc thân?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q4_input'></div>
+<div class='explanation' id='part3_q4_result' data-answer=' 2' data-solution='%3Cbr%3ES%E1%BB%B1%20ph%C3%A2n%20b%E1%BB%91%20electron%20tr%C3%AAn%20c%C3%A1c%20orbital%20c%E1%BB%A7a%20oxygen%3A%20%3Cbr%3E%3Cimg%20src%3D%22phan%20bo%20e%20tren%20orbital%20cua%20O.png%22%20alt%3D%22Image%22%20style%3D%22max-width%3A30%25%3B%22%3E%3Cbr%3ETa%20th%E1%BA%A5y%20oxygen%20c%C3%B3%202%20electron%20%C4%91%E1%BB%99c%20th%C3%A2n.'></div>
+</div>
+</div>
+<div class='section' id='part4' data-parttype='4'>
+<h2>Phần 4: Trắc nghiệm điền khuyết</h2>
+<div class='question' id='part4_q1'>
+<p><strong>Câu 1:</strong><br><br>Phân lớp s có tối đa <span class='blank-container'><input type='text' id='part4_q1_blank1' data-answer=' 2' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span> electron, phân lớp p có tối đa <span class='blank-container'><input type='text' id='part4_q1_blank2' data-answer=' 6' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span> electron.</p>
+<div class='explanation' id='part4_q1_result' data-solution=''></div>
+</div>
+<div class='question' id='part4_q2'>
+<p><strong>Câu 2:</strong><br><br>Nguyên tử calcium (Z = 20) có số lớp electron là <span class='blank-container'><input type='text' id='part4_q2_blank1' data-answer=' 4' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span> lớp, số electron lớp ngoài cùng là <span class='blank-container'><input type='text' id='part4_q2_blank2' data-answer=' 2' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span> electron.</p>
+<div class='explanation' id='part4_q2_result' data-solution=''></div>
+</div>
+<div class='question' id='part4_q3'>
+<p><strong>Câu 3:</strong><br><br>Trong nguyên tử ở trạng thái cơ bản, electron điền vào orbital theo <span class='blank-container'><input type='text' id='part4_q3_blank1' data-answer=' nguyên lý vững bền|| nguyên lí vững bền|| nguyên lý Aufbau|| nguyên lí Aufbau|| Aufbau' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span>, nguyên lý Pauli và quy tắc <span class='blank-container'><input type='text' id='part4_q3_blank2' data-answer=' Hund' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span>.</p>
+<div class='explanation' id='part4_q3_result' data-solution=''></div>
+</div>
+<div class='question' id='part4_q4'>
+<p><strong>Câu 4:</strong><br><br>Electron thuộc phân lớp 3d có mức năng lượng <span class='blank-container'><input type='text' id='part4_q4_blank1' data-answer=' cao hơn' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span> so với phân lớp 4s.</p>
+<div class='explanation' id='part4_q4_result' data-solution=''></div>
+</div>
+<div class='question' id='part4_q5'>
+<p><strong>Câu 5:</strong><br><br>Ký hiệu các phân lớp: s, p, d, f là viết tắt của các từ tiếng Anh <span class='blank-container'><input type='text' id='part4_q5_blank1' data-answer=' sharp' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span>, <span class='blank-container'><input type='text' id='part4_q5_blank2' data-answer=' principal' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span>, <span class='blank-container'><input type='text' id='part4_q5_blank3' data-answer=' diffuse' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span>, <span class='blank-container'><input type='text' id='part4_q5_blank4' data-answer=' fundamental' class='auto-expand' style='width:50px; height:16px; padding:2px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value + ' ').width;this.style.width=Math.max(50, textWidth + 4)+'px';"></span>.</p>
+<div class='explanation' id='part4_q5_result' data-solution=''></div>
+</div>
+</div>
+<div class='section' id='part5' data-parttype='5'>
+<h2>Phần 5: Trắc nghiệm kéo - thả</h2>
+<div class='question' id='part5_q1'>
+<p class='question-content'><strong>Câu 1:</strong><br><br>Ghép orbital với số electron tối đa có thể chứa</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_0'>2p</div>
+<div class='draggable-item' data-label='5' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_1'>2s</div>
+<div class='draggable-item' data-label='6' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_2'>3p</div>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_3'>1s</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_4'>3d</div>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_5'>4f</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q1_drop_0' data-expected='1, 5' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>2</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q1_drop_1' data-expected='3, 6' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>6</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='C' id='part5_q1_drop_2' data-expected='4' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>10</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='D' id='part5_q1_drop_3' data-expected='2' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>14</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q1_result' data-answer-pairs='1s -- 2 || 4f -- 14 || 2p -- 6 || 3d -- 10 || 2s -- 2 || 3p -- 6' data-solution=''></div>
+</div>
+<div class='question' id='part5_q2'>
+<p class='question-content'><strong>Câu 2:</strong><br><br>Ghép nguyên tố với số electron lớp ngoài cùng</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_0'>Na (Z = 11)</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_1'>Mg (Z = 12)</div>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_2'>F (Z = 9)</div>
+<div class='draggable-item' data-label='5' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_3'>Cl (Z = 17)</div>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_4'>O (Z = 8)</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q2_drop_0' data-expected='3' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>1 electron</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q2_drop_1' data-expected='4' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>2 electron</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='C' id='part5_q2_drop_2' data-expected='1' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>6 electron</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='D' id='part5_q2_drop_3' data-expected='2, 5' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>7 electron</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q2_result' data-answer-pairs='O (Z = 8) -- 6 electron || F (Z = 9) -- 7 electron || Na (Z = 11) -- 1 electron || Mg (Z = 12) -- 2 electron || Cl (Z = 17) -- 7 electron' data-solution=''></div>
+</div>
+<div class='question' id='part5_q3'>
+<p class='question-content'><strong>Câu 3:</strong><br> <br>Ghép nguyên tố với tính chất phù hợp</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_0'>C (Z = 6)</div>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_1'>Ne (Z=10)</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_2'>Al (Z = 13)</div>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_3'>F (Z = 9)</div>
+<div class='draggable-item' data-label='5' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_4'>S (Z = 16)</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q3_drop_0' data-expected='4' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Kim loại</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q3_drop_1' data-expected='1, 2, 5' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Phi kim</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='C' id='part5_q3_drop_2' data-expected='3' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Khí hiếm (khí trơ)</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q3_result' data-answer-pairs='C (Z = 6) -- Phi kim || F (Z = 9) -- Phi kim || Ne (Z=10) -- Khí hiếm (khí trơ) || Al (Z = 13) -- Kim loại || S (Z = 16) -- Phi kim' data-solution=''></div>
+</div>
+</div>
+
+    <div style='text-align:center; margin-top:40px;'>
+      <button id='submitBtn' onclick='gradeQuiz();'>Nộp bài</button>
+    </div>
+    <script>
+      function gradeQuiz() {
+         let score = 0, total = 0;
+         document.querySelectorAll('.section').forEach(function(section) {
+           let partType = section.getAttribute('data-parttype');
+           section.querySelectorAll('.question').forEach(function(q) {
+             total++;
+             let qid = q.id;
+             let feedback = "";
+             if (partType === "1") {
+               let selected = q.querySelector('input[name="' + qid + '"]:checked');
+               let correct = q.querySelector('.explanation').getAttribute('data-answer');
+               if (!selected) {
+                 feedback = '<span style="color:#e53935;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else if (selected.value === correct) {
+                 score++;
+                 feedback = '<span style="color:#43a047;"><strong>Đúng (' + correct + ')</strong></span>';
+               } else {
+                 feedback = '<span style="color:#e53935;"><strong>Sai. Đáp án đúng: ' + correct + '</strong></span>';
+               }
+             } else if (partType === "2") {
+               let selectedList = q.querySelectorAll('input[name="' + qid + '"]:checked');
+               if (selectedList.length === 0) {
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer');
+                 feedback = '<span style="color:#e53935;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else {
+                 let userAnswers = [];
+                 selectedList.forEach(function(el) { userAnswers.push(el.value); });
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer').split(',');
+                 userAnswers.sort(); correct.sort();
+                 if (userAnswers.join() === correct.join()) {
+                   score++;
+                   feedback = '<span style="color:#43a047;"><strong>Đúng (' + correct.join(',') + ')</strong></span>';
+                 } else {
+                   feedback = '<span style="color:#e53935;"><strong>Sai. Đáp án đúng: ' + correct.join(',') + '</strong></span>';
+                 }
+               }
+             } else if (partType === "3") {
+               let userInput = document.getElementById(qid + '_input').value.trim();
+               let correctData = q.querySelector('.explanation').getAttribute('data-answer');
+               let accepted = correctData.split('||').map(s => s.trim());
+               if (!userInput) {
+                 feedback = '<span style="color:#e53935;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+               } else {
+                 if (accepted.includes(userInput)) {
+                   score++;
+                   feedback = '<span style="color:#43a047;"><strong>Đúng</strong></span>';
+                 } else {
+                   feedback = '<span style="color:#e53935;"><strong>Sai. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+                 }
+               }
+             } else if (partType === "4") {
+               let inputs = q.querySelectorAll('input.auto-expand');
+               let blankResults = [];
+               inputs.forEach(function(inp, index) {
+                 let accepted = inp.getAttribute('data-answer').split('||').map(s => s.trim());
+                 let userAnswer = inp.value.trim();
+                 if (userAnswer !== "") {
+                   if (accepted.includes(userAnswer)) {
+                     blankResults.push({blank: index+1, correct: true, answer: userAnswer, accepted: accepted});
+                   } else {
+                     blankResults.push({blank: index+1, correct: false, answer: userAnswer, accepted: accepted});
+                   }
+                 } else {
+                   blankResults.push({blank: index+1, answered: false, accepted: accepted});
+                 }
+               });
+               inputs.forEach(function(inp, index) {
+                 let res = blankResults[index];
+                 if (res.answered === false) { }
+                 else {
+                   let span = document.createElement('span');
+                   span.style.fontWeight = 'bold';
+                   if (res.correct) {
+                     span.style.color = '#43a047';
+                     span.textContent = res.answer;
+                   } else {
+                     span.style.color = '#e53935';
+                     span.textContent = res.answer;
+                   }
+                   inp.parentNode.replaceChild(span, inp);
+                 }
+               });
+               let wrongBlanks = [];
+               let unansweredBlanks = [];
+               blankResults.forEach(function(r) {
+                 if (r.answered === false) { unansweredBlanks.push(r.blank); }
+                 else if (!r.correct) { wrongBlanks.push(r.blank); }
+               });
+               if (wrongBlanks.length === 0 && unansweredBlanks.length === 0) {
+                 feedback = '<span style="color:#43a047; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerList = "";
+                 blankResults.forEach(function(r) {
+                   answerList += r.blank + ') ' + r.accepted.join(', hoặc ') + '<br>';
+                 });
+                 feedback = '<span style="color:#e53935; font-weight:bold;">Sai.';
+                 if (wrongBlanks.length > 0) {
+                   feedback += ' Bạn trả lời sai vị trí ' + wrongBlanks.join(', ') + '.';
+                 }
+                 if (unansweredBlanks.length > 0) {
+                   feedback += ' Bạn chưa trả lời vị trí ' + unansweredBlanks.join(', ') + '.';
+                 }
+                 feedback += '<br>Đáp án đúng là:<br>' + answerList + '</span>';
+               }
+             } else if (partType === "5") {
+               let correctForQuestion = true;
+               q.querySelectorAll('.dropzone').forEach(function(dropZone) {
+                 let expected = dropZone.getAttribute('data-expected').trim();
+                 let userItems = Array.from(dropZone.querySelectorAll('.draggable-item')).map(e => e.getAttribute('data-label')).sort();
+                 let expectedItems = expected ? expected.split(',').map(s => s.trim()).sort() : [];
+                 if (JSON.stringify(userItems) !== JSON.stringify(expectedItems)) {
+                   correctForQuestion = false;
+                 }
+               });
+               if (correctForQuestion) {
+                 feedback = '<span style="color:#43a047; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerPairs = q.querySelector('.explanation').getAttribute('data-answer-pairs');
+                 feedback = '<span style="color:#e53935; font-weight:bold;">Sai. Đáp án đúng là:<br>' + answerPairs.replace(/ \|\| /g, "<br>") + '</span>';
+               }
+             }
+             let expl = q.querySelector('.explanation');
+             expl.innerHTML = feedback;
+             let encodedSolution = expl.getAttribute('data-solution');
+             let solution = encodedSolution ? decodeURIComponent(encodedSolution) : "";
+             let cleanedSolution = solution.replace(/<br\s*\/?>/gi, '').trim();
+             if (cleanedSolution !== "") {
+                 expl.innerHTML += '<div style="margin-top:10px;"><strong>Lời giải:</strong></div><div>' + solution + '</div>';
+             }
+             expl.style.display = "block";
+           });
+         });
+         document.getElementById('scoreDisplay').innerHTML = 'Tổng số điểm: ' + score + ' / ' + total;
+         document.querySelectorAll('input, select').forEach(function(inp) { inp.disabled = true; });
+         let sb = document.getElementById('submitBtn'); if(sb) sb.disabled = true;
+         MathJax.typesetPromise();
+      }
+    </script>
+  </div>
+</body>
+</html>
